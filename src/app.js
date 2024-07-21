@@ -15,4 +15,11 @@ app.use(express.static("public"))
 app.use(cookieParser())                                             //to get the access of users's cookie and uspe CRUD operation perfrom kar ske. 
 
 
+//import routes
+import userRouter from './routes/user.routes.js'
+
+//route declare
+app.use("/api/v1/users", userRouter)
+
+
 export {app}
