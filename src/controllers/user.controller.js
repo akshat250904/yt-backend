@@ -231,7 +231,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 })
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    return res.status(200).json(200, req.user, "Current user fetched successfully")
+    return res.status(200).json(new ApiResponse(200, req.user, "Current user fetched successfully"))
 })
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -258,7 +258,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 })
 
-const updateUserAvatar = asyncHandler(async (req, res) => {
+const updateUserAvatar = asyncHandler(async (req, res) => { 
     const avatarLocalPath = req.file?.path
 
     if(!avatarLocalPath){
@@ -284,6 +284,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     return res
     .status(200)
     .json(200, user, "avatar file updated successfully")
+
+    //write a function to delete the previous avatar from cloudinary
 
 })
 
