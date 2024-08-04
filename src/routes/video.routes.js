@@ -73,7 +73,7 @@ router
         publishAVideo
     );
 
-router
+    router
     .route("/:videoId")
     .get(getVideoById)
     .delete(deleteVideo)

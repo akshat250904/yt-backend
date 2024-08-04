@@ -44,7 +44,8 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String,
-        }
+        },
+        tweets: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' },
 
     }, { timestamps: true });
 
