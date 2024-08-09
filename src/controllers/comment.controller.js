@@ -7,11 +7,25 @@ import { User } from "../models/user.model.js"
 import { Video } from "../models/video.model.js"
 
 const getVideoComments = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a video
-    const {videoId} = req.params
-    const {page = 1, limit = 10} = req.query
+    const { videoId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
 
-})
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video ID");
+    }
+
+    const skip = (page - 1) * limit;
+    const comments = await Comment.find({ video: videoId })
+        .skip(skip)
+        .limit(parseInt(limit))
+        .populate('owner', 'name email'); // Adjust the fields to be populated as needed
+
+    if (comments.length === 0) {
+        return res.status(404).json(new ApiResponse(404, null, "No comments found for this video"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, comments, "Comments retrieved successfully"));
+});
 
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video

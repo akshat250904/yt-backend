@@ -55,53 +55,64 @@ const getUserTweets = asyncHandler(async (req, res) => {
 })
 
 const updateTweet = asyncHandler(async (req, res) => {
-    //TODO: update tweet
-    if(!req.user){
-        throw new ApiError(401,"User is not logged in")
+    if (!req.user) {
+        throw new ApiError(401, "User not logged in");
     }
 
     const userId = req.user._id;
-    const tweetId = req.params.tweetId
+    const tweetId = req.params.tweetId;
 
-    const user = await User.findById(userId)
-    if(!user){
-        throw new ApiError(401,"User not found")
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
 
-    const {content} = req.body
-    
-    const tweet = await Tweet.findByIdAndUpdate(
-        tweetId,
-        {content},
-        {new: true}
-    )
+    const { content } = req.body;
 
-    if(!tweet){
-        throw new ApiError(401,"Tweet not found")
+    if (!content) {
+        throw new ApiError(400, "Content is required to update the tweet");
     }
 
-    return res.status(200)
-    .json(new ApiResponse(200, tweet, "Tweet updated successfully"))
+    const tweet = await Tweet.findById(tweetId);
+    if (!tweet) {
+        throw new ApiError(404, "Tweet not found");
+    }
+
+    if (tweet.owner.toString() !== userId.toString()) {
+        throw new ApiError(403, "You are not authorized to update this tweet");
+    }
+
+    tweet.content = content;
+    await tweet.save();
+
+    return res.status(200).json(new ApiResponse(200, tweet, "Tweet updated successfully"));
 })
 
 const deleteTweet = asyncHandler(async (req, res) => {
-    //TODO: delete tweet
-    if(!req.user){
-        throw new ApiError(401,"User not logged in")
+    if (!req.user) {
+        throw new ApiError(401, "User not logged in");
     }
 
-    const userId = req.user._id
-    const tweetId = req.params.tweetId
+    const userId = req.user._id;
+    const tweetId = req.params.tweetId;
 
-    const user = await User.findById(userId)
-    if(!user){
-        throw new ApiError(401,"user not found")
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
 
-    const tweet = await Tweet.findByIdAndDelete(tweetId)
+    const tweet = await Tweet.findById(tweetId);
+    if (!tweet) {
+        throw new ApiError(404, "Tweet not found");
+    }
 
-    return res.status(200)
-    .json(new ApiResponse(200,"tweet deleted successfully"))
+    if (tweet.owner.toString() !== userId.toString()) {
+        throw new ApiError(403, "You are not authorized to delete this tweet");
+    }
+
+    await Tweet.findByIdAndDelete(tweetId);
+
+    return res.status(200).json(new ApiResponse(200, null, "Tweet deleted successfully"));
 })
 
 export {

@@ -45,7 +45,9 @@ const userSchema = new Schema(
         refreshToken: {
             type: String,
         },
-        tweets: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' },
+        tweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
+        videos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
+        playlists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }],
 
     }, { timestamps: true });
 
